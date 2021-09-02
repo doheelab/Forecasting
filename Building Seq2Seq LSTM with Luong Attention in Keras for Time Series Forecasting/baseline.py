@@ -17,7 +17,6 @@ from tensorflow.keras.utils import plot_model
 from tensorflow.keras.callbacks import EarlyStopping
 
 import pydot as pyd
-from tensorflow.keras.utils import plot_model
 import tensorflow
 
 tensorflow.keras.utils.pydot = pyd
@@ -34,6 +33,8 @@ x1_trend_param = data["x1_trend_param"]
 x2_trend_param = data["x2_trend_param"]
 x_train_max = data["x_train_max"]
 
+input_train = Input(shape=(X_input_train.shape[1], X_input_train.shape[2] - 1))
+output_train = Input(shape=(X_output_train.shape[1], X_output_train.shape[2] - 1))
 input_train = Input(shape=(X_input_train.shape[1], 1))
 output_train = Input(shape=(X_output_train.shape[1], 1))
 
@@ -60,6 +61,7 @@ encoder_last_h1, _, encoder_last_c = LSTM(
     return_sequences=False,
     return_state=True,
 )(input_train)
+
 
 encoder_last_h1 = BatchNormalization(momentum=0.6)(encoder_last_h1)
 encoder_last_c = BatchNormalization(momentum=0.6)(encoder_last_c)
@@ -103,7 +105,7 @@ train_mae = history.history["mae"]
 valid_mae = history.history["val_mae"]
 
 # model.save("save/model_forecasting_seq2seq.h5")
-# model.load_weights("../save/model_forecasting_seq2seq.h5")
+model.load_weights("../save/model_forecasting_seq2seq.h5")
 
 
 plt.plot(train_mae, label="train mae"),
